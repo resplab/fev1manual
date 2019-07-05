@@ -1,0 +1,50 @@
+<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+<div class="row">
+  <div class="col-4">
+    <div class="list-group" id="list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action active" id="list-weight-list" data-toggle="list" href="#list-weight" role="tab" aria-controls="weight">Weight (kg)</a>
+      <a class="list-group-item list-group-item-action" id="list-height-list" data-toggle="list" href="#list-height" role="tab" aria-controls="height">Height (m)</a>
+      <a class="list-group-item list-group-item-action" id="list-smoking-list" data-toggle="list" href="#list-smoking" role="tab" aria-controls="smoking">Smoking History (pack-years)</a>
+      <a class="list-group-item list-group-item-action" id="list-age-list" data-toggle="list" href="#list-age" role="tab" aria-controls="age">Age (years)</a>
+      <a class="list-group-item list-group-item-action" id="list-gender-list" data-toggle="list" href="#list-gender" role="tab" aria-controls="gender">Gender (male or female)</a>
+      <a class="list-group-item list-group-item-action" id="list-oco-list" data-toggle="list" href="#list-oco" role="tab" aria-controls="oco">Methacholine Responsiveness (O-Connor Slope)</a>
+    </div>
+  </div>
+  <div class="col-8">
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="list-weight" role="tabpanel" aria-labelledby="list-weight-list">
+        Patient weight in kilograms.
+      </div>
+      <div class="tab-pane fade" id="list-height" role="tabpanel" aria-labelledby="list-height-list">
+        Patient height in metres.
+      </div>
+      <div class="tab-pane fade" id="list-smoking" role="tabpanel" aria-labelledby="list-smoking-list">
+        For smoking history, we used the metric pack-years. One pack is 20 cigarettes, and one pack-year is equal to smoking 1 pack/day for 1 year. 
+        <br>
+        Number of pack-years = (packs smoked per day) × (years as a smoker) 
+      </div>
+      <div class="tab-pane fade" id="list-age" role="tabpanel" aria-labelledby="list-age-list">
+        Patient age at the beginning of the study.
+      </div>
+    <div class="tab-pane fade" id="list-gender" role="tabpanel" aria-labelledby="list-gender-list">
+      For the purpose of this study, we only looked at "Male" and "Female" genders. 
+    </div>
+    <div class="tab-pane fade" id="list-oco" role="tabpanel" aria-labelledby="list-oco-list">
+      Methacholine is a bronchoconstrictor, meaning that it causes the airways in the lungs to close up. The Methacholine Challenge is a test used to measure hyperreactivity: how easy is it for the airways to close? To complete the test, a doctor will give a patient different doses of methacholine, starting at a low dose and increasing up to 2 mg. After each dose, the doctor will measure the FEV1 score to test the lung function. <br>
+        y: (Final FEV1 Score - Initial FEV1 Score)/ Initial FEV1 Score <br>
+        x: Final cumulative dose of methacholine (add all the doses) <br>
+        O'Connor Slope = y / x <br>
+For more reading: <br>
+<a href="https://en.wikipedia.org/wiki/Bronchial_challenge_test">Bronchial Challenge Test</a><br>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1298336/">Describes O'Connor Slope</a>
+    </div>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+
