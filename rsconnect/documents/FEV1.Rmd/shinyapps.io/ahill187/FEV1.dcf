@@ -1,0 +1,12 @@
+name: FEV1
+title: FEV1
+username:
+account: ahill187
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1012309
+bundleId: 2200683
+url: https://ahill187.shinyapps.io/FEV1/
+when: 1562268144.18365
+asMultiple: FALSE
+asStatic: FALSE

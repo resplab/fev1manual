@@ -1,0 +1,592 @@
+---
+title: "FEV1 Prediction Model for COPD"
+site: "bookdown::bookdown_site"
+runtime: "shiny"
+output:
+  bookdown::gitbook:
+    lib_dir: "book_assets"
+    table_css: FALSE
+    css: ["pretty-styles.css", "cayman.css", "python.css"]
+    config:
+      toc:
+        collapse: subsection
+        scroll_highlight: yes
+        before: null
+        after: null
+      toolbar:
+        position: fixed
+      edit : null
+      download: null
+      search: yes
+      fontsettings:
+        theme: white
+        family: sans
+        size: 2
+      sharing:
+        facebook: yes
+        twitter: yes
+        google: no
+        linkedin: no
+        weibo: no
+        instapaper: no
+        vk: no
+        all: ['facebook', 'google', 'twitter', 'linkedin', 'weibo', 'instapaper']
+  bookdown::pdf_book:
+    keep_tex: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+# Introduction {#introduction}
+
+The purpose of this package is to predict future FEV1 lung function scores based on current inputs, such as height, weight, FEV1 score, etc.
+
+It might be helpful to take a look at the FEV1 web application before reading further, as this gives a visualization of the package: [FEV1 Web Application](#webapp).
+
+# The Study {#thestudy}
+The **fev1** package and application are based on the paper [Individualized prediction of lung-function decline in chronic obstructive pulmonary disease](http://www.cmaj.ca/content/cmaj/188/14/1004.full.pdf), published in 2016.
+
+## Background {#background}
+
+Chronic Obstructive Pulmonary Disease (COPD) affects 300 million people worldwide. One of the primary clinical tests used to assess a patient's lung function is the FEV1 score. FEV1 stands for "Forced Expiration Volume in 1 second," and is measured by a device called a spirometer. Forced expiration is basically exhaling forcefully into the spirometer, so FEV1 is measuring how much (volume in Litres) air a patient exhales in 1 second. Generally, a higher FEV1 score means better lung function.
+
+## The Study Population {#studyPopulation}
+
+The data for this study was taken from the [Lung Health Study](https://www.ncbi.nlm.nih.gov/pubmed/8500311).
+
+Number of Participants: 5887
+
+Type of Study: Multicentre Clinical Randomized
+
+Criteria:
+
+- Ages 35 - 60
+
+- Mild to Moderate COPD
+
+- No other respiratory illnesses
+
+- High risk for COPD
+
+- Current smoker
+
+## Study Group Divisions
+
+Each of the 5887 patients was randomly assigned to one of three groups: 
+
+```{r diagram, eval = TRUE, echo = FALSE}
+library(DiagrammeR)
+nodes <- create_node_df(n=4, type = "character",
+                        color = "#330033",
+                        fontcolor = "white",
+                        fillcolor = "#330033",
+                        shape = "oval",
+                        fontsize = 4,
+                        label = c("All Participants","Usual Care", 
+                                  "Smoking \n Intervention \n + \n Placebo Inhaler", 
+                                  "Smoking \n Intervention \n + \n Bronchodilator \n Inhaler"))
+
+edges <- create_edge_df(from = c(1, 1, 1),
+                        to = c(2, 3, 4),
+                       rel = "leading to",
+                       color = "#4cdef5")
+
+graph <- create_graph(nodes_df = nodes, 
+                      edges_df = edges) 
+render_graph(graph, layout="tree")
+```
+
+### Group 1: Usual Care {-}
+
+Number of Participants: 1962
+
+Treatment: None. This group only received usual care, no interventions. 
+
+Group Type: Behaviour Control, Inhaler Control
+
+### Group 2: Smoking Intervention and Placebo Inhaler {-}
+
+Number of Participants: 1962
+
+Treatment: 
+
+- Behavioural treatment designed to help patients quit smoking
+- Regular placebo inhaler use
+
+Group Type: Behaviour Active, Inhaler Control
+
+### Group 3: Smoking Intervention and Bronchodilator Inhaler {-}
+
+Number of Participants: 1963
+
+Treatment:
+
+- Behavioural treatment designed to help patients quit smoking
+- Regular bronchodilator inhaler use
+
+Group Type: Behaviour Active, Inhaler Active
+
+## Data Collection
+
+### Primary Metric {-}
+
+```{r, eval=TRUE, echo=FALSE}
+library(htmltools)
+rawHTML <- paste(readLines("primary-metric.html"), collapse="\n")
+HTML(rawHTML)
+```
+
+### Secondary Metrics {-}
+
+```{r, eval=TRUE, echo=FALSE}
+rawHTML <- paste(readLines("secondary-metrics.html"), collapse="\n")
+HTML(rawHTML)
+```
+
+
+# Using the Package in R {#packageinR}
+
+## Installation
+
+If you do not have R installed on your computer, please go to [Appendix 1](#appendix1). Once you have R installed, you can install this package in the R console:
+
+```{r chunk-label, eval = FALSE, echo = TRUE}
+install.packages("fev1")
+```
+
+## FEV1 Prediction Function
+
+### Example
+
+To get started, there is an R data frame with the package of sample patient data:
+
+```{r sample-patients, eval = TRUE, echo = TRUE}
+library(fev1)
+samplePatients
+```
+
+To get a prediction:
+
+```{r get-prediction, eval = TRUE, echo = TRUE}
+results = predictFEV1(samplePatients)
+head(results)
+```
+```{r setup-prediction, eval = TRUE, echo = FALSE}
+rox = c("Title", "Description", "patientData", "onePatient", "predictionModel", "Returns")
+values = c("Predict FEV1", "Predicts COPD exacerbations within the next year",
+           "patient data matrix, can have one or many patients in it",
+           "is there only one patient in the matrix?", 
+           "An integer from 1-4; select a prediction model described below",
+           "FEV1 prediction for smoking and quitting smoking")
+metadata = data.frame(ROxygen2 = rox, Details = values)
+```
+
+
+```{r predict-FEV1, eval = TRUE, echo = FALSE}
+knitr::kable(
+  metadata, booktabs = TRUE
+)
+```
+
+## FEV1 Projection Models
+
+The **predictFEV1()** function takes a patient data matrix as input, and then sends the data to one of the projection models to get a prediction. Currently, there are 4 projection models, with the main difference between them being the amount of input variables.
+
+### FEV1 Projection Model 1 Basic Model {-}
+
+The function **fev1_projection1()** is the basic model, taking only baseline FEV1 function, the effect of intervention on lung function, and tiotropium treatment as arguments. 
+
+```{r setup-proj1, eval = TRUE, echo = FALSE}
+dev.off()
+rox = c("fev1_0", "int_effect", "tio")
+types = c("numeric", "numeric", "string")
+values = c("Baseline FEV1 score (L)",
+           "Effect of intervention on lung function (L)", 
+           "is the patient taking tiotropium, 'Yes' or 'No'?")
+metadata = data.frame(Parameter = rox, Type = types, Description = values)
+```
+```{r proj1, eval = TRUE, echo = FALSE}
+knitr::kable(
+  metadata, booktabs = TRUE
+)
+```
+
+```{r chart-proj1, eval = TRUE, echo = TRUE}
+patientData = samplePatients[1,]
+results = fev1_projection1(fev1_0 = patientData$fev1_0,
+                          int_effect = patientData$int_effect,
+                          tio = patientData$tio)$df
+chart = projectionChart(results)
+chart
+```
+
+### FEV1 Projection Model 2 (Complete Model with O'Conner Slope) {-}
+
+The function **fev2_projection()** is the complete model, including the O'Conner Slope. The arguments are described in the table below.
+
+```{r setup-proj2, eval = TRUE, echo = FALSE}
+dev.off()
+rox = c("fev1_0", "int_effect","male", "smoking", "age", "weight", "height", "oco", "tio")
+types = c("numeric", "numeric", "integer", "integer", "integer", "numeric", "numeric","numeric", "string")
+values = c("Baseline FEV1 score (L)",
+           "Effect of intervention on lung function (L)",
+           "1 = Male, 0 = Female", 
+           "1 = Smoker, 0 = Non-Smoker",
+           "Patient age in years",
+           "Patient weight (kg)",
+           "Patient height (m)",
+           "O'Conner Slope",
+           "is the patient taking tiotropium, 'Yes' or 'No'?")
+metadata = data.frame(Parameter = rox, Type = types, Description = values)
+```
+```{r proj2, eval = TRUE, echo = FALSE}
+knitr::kable(
+  metadata, booktabs = TRUE
+)
+```
+
+```{r chart-proj2, eval = TRUE, echo = TRUE}
+patientData = samplePatients[1,]
+results = fev1_projection2(fev1_0 = patientData$fev1_0, 
+                                        int_effect = patientData$int_effect,
+                                        male = patientData$male,
+                                        smoking = 1, 
+                                        age = patientData$age,
+                                        weight = patientData$weight, 
+                                        height = patientData$height,
+                                        oco = patientData$oco,
+                                        tio = patientData$tio)$df
+chart = projectionChart(results)
+chart
+```
+
+### FEV1 Projection Model 3 (Complete Model without O'Conner Slope) {-}
+
+The function **fev2_projection()** is the complete model, including the O'Conner Slope. The arguments are described in the table below.
+
+```{r setup-proj3, eval = TRUE, echo = FALSE}
+rox = c("fev1_0", "int_effect","male", "smoking", "age", "weight", "height", "tio")
+types = c("numeric", "numeric", "integer", "integer", "integer", "numeric","numeric", "string")
+values = c("Baseline FEV1 score (L)",
+           "Effect of intervention on lung function (L)",
+           "1 = Male, 0 = Female", 
+           "1 = Smoker, 0 = Non-Smoker",
+           "Patient age in years",
+           "Patient weight (kg)",
+           "Patient height (m)",
+           "is the patient taking tiotropium, 'Yes' or 'No'?")
+metadata = data.frame(Parameter = rox, Type = types, Description = values)
+```
+```{r table-proj3, eval = TRUE, echo = FALSE}
+knitr::kable(
+  metadata, booktabs = TRUE
+)
+```
+
+```{r chart-proj3, eval = TRUE, echo = TRUE}
+patientData = samplePatients[1,]
+results = fev1_projection3(fev1_0 = patientData$fev1_0, 
+                                        int_effect = patientData$int_effect,
+                                        male = patientData$male,
+                                        smoking = patientData$smoking, 
+                                        age = patientData$age,
+                                        weight = patientData$weight, 
+                                        height = patientData$height)
+chart = projectionChart(results)
+chart
+```
+
+### FEV1 Projection Model 4 (Extended Model) {-}
+
+The function **fev4_projection()** is the extended model, including the O'Conner Slope and FEV1 score from previous year. The arguments are described in the table below.
+
+```{r setup-proj4, eval = TRUE, echo = FALSE}
+rox = c("fev1_0","fev1_prev", "int_effect","male", "smoking", "age", "weight", "height","oco", "tio")
+types = c("numeric","numeric", "numeric", "integer", "integer", "integer", "numeric","numeric","numeric", "string")
+values = c("Baseline FEV1 score (L)",
+           "FEV1 score from previous year (L)",
+           "Effect of intervention on lung function (L)",
+           "1 = Male, 0 = Female", 
+           "1 = Smoker, 0 = Non-Smoker",
+           "Patient age in years",
+           "Patient weight (kg)",
+           "Patient height (m)",
+           "O'Connor Slope",
+           "is the patient taking tiotropium, 'Yes' or 'No'?")
+metadata = data.frame(Parameter = rox, Type = types, Description = values)
+```
+```{r table-proj4, eval = TRUE, echo = FALSE}
+knitr::kable(
+  metadata, booktabs = TRUE
+)
+```
+
+```{r chart-proj4, eval = TRUE, echo = TRUE}
+patientData = samplePatients[1,]
+results = fev1_projection4(fev1_0 = patientData$fev1_0, 
+                                        fev1_prev = patientData$fev1_prev,
+                                        int_effect = patientData$int_effect,
+                                        male = patientData$male,
+                                        smoking = patientData$smoking, 
+                                        age = patientData$age,
+                                        weight = patientData$weight, 
+                                        height = patientData$height,
+                                        oco = patientData$oco,
+                                        tio = patientData$tio)$df
+chart = projectionChart(results)
+chart
+```
+
+# Using the Package as an API (PRISM)
+
+PRISM (Programmable Interface for Simulation/Statistical Models) is a package which provides a user-friendly API interface in R for clinical prediction and decision analytics models hosted on UBC PRISM cloud.
+
+For more information, the PRISM package can be found on GitHub at [PRISM on  GitHub](https://github.com/resplab/prism).
+
+## PRISM in R
+
+To install PRISM in R, you will need to install it from GitHub. In an R Console:
+```{r prism-r, eval = FALSE, echo = TRUE}
+devtools::install_github("resplab/prism")
+```
+
+To use PRISM in R:
+```{r prism-api-r, eval = TRUE, echo = FALSE}
+your_api_key = 123456
+```
+
+```{r prism-fev1, eval = TRUE, echo = TRUE}
+library(prism)
+connect_to_model("fev1Prism", api_key = your_api_key)
+patient1 <- fev1::samplePatients[1,]
+model_run(patient1)
+res <- as.data.frame(model_run(patient1))
+```
+
+## PRISM in Shell
+
+### Linux
+
+You will need curl installed to use the API. To check if you have curl:
+```{bash prism-curl, eval = FALSE, echo = TRUE}
+dpkg -l curl
+```
+
+If you do not have curl, you can install it by:
+```{bash prism-curl-install, eval = FALSE, echo = TRUE}
+sudo apt install curl
+```
+
+```{bash prism-linux, eval = FALSE, echo = TRUE}
+
+curl -X POST -H "Content-Type: application/json" -d '{"api_key":["YOUR_API_KEY"],"func":["prism_model_run"],"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]}' http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json
+```
+
+```{bash prism-linux2, eval = TRUE, echo = FALSE}
+
+curl -X POST -H "Content-Type: application/json" -d '{"api_key":[123456],"func":["prism_model_run"],"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]}' http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json
+```
+### Mac OS
+
+You will need curl installed to use the API. To check if you have curl:
+```{bash prism-curl-mac, eval = FALSE, echo = TRUE}
+brew list curl
+```
+
+If you do not have curl, you can install it using HomeBrew:
+```{bash prism-curl-install-mac, eval = FALSE, echo = TRUE}
+brew install curl
+```
+
+```{bash prism-mac, eval = FALSE, echo = TRUE}
+
+curl -X POST -H "Content-Type: application/json" -d '{"api_key":["YOUR_API_KEY"],"func":["prism_model_run"],"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]}' http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json
+```
+
+```{bash prism-mac2, eval = TRUE, echo = FALSE}
+
+curl -X POST -H "Content-Type: application/json" -d '{"api_key":[123456],"func":["prism_model_run"],
+"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]}' http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json
+```
+
+### Windows PowerShell
+
+In PowerShell:
+
+```{bash prism-windows, eval=FALSE, echo = TRUE}
+curl -Body '{"api_key":["YOUR_API_KEY"],"func":["prism_model_run"],"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]}' -Method POST -uri http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json -Headers @{"Content-type"="application/json"}
+```
+
+```{bash prism-windows2, eval = TRUE, echo = FALSE}
+
+curl -X POST -H "Content-Type: application/json" -d '{"api_key":[123456],"func":["prism_model_run"],
+"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]}' http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json
+```
+
+
+## PRISM in Python
+
+To get started, you will need to import the **json** and **requests** libraries. To install, open a terminal:
+
+```{bash prism-python, eval = FALSE, echo = TRUE, engine.path = '/usr/bin/python3'}
+pip3 install requests
+```
+
+We will start with the GET request. If everything is working, this should return 200 as a response.
+
+```{python prism-python-get, eval = TRUE, echo = TRUE, engine.path = '/usr/bin/python3'}
+import json
+import requests
+response = requests.get("http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json")
+print(response)
+```
+
+For the POST request, we will send some patient data to the API, and should get a prediction back from the API.
+
+```{python prism-python2, eval = FALSE, echo = TRUE, engine.path = '/usr/bin/python3'}
+api_key = 'YOUR_API_KEY'
+patientInput = [{
+"ID":"10001",
+"male":1,
+"age":70,
+"smoker":1,
+"FEV1":2.5,
+"height":1.68,
+"weight":65
+}]
+response = requests.post("http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json", 
+  json = {"api_key":[api_key],
+  "func": ["prism_model_run"],
+  "model_input": patientInput})
+print(response)
+results = json.loads(response.text)
+print(results)
+```
+
+```{python prism-python3, eval = TRUE, echo = FALSE, engine.path = '/usr/bin/python3'}
+response = requests.post("http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json", json = {"api_key":[123456],"func":["prism_model_run"],"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]})
+print(response)
+results = json.loads(response.text)
+print(results)
+```
+
+We will put the results in a dictionary:
+
+```{python prism-python4, eval = TRUE, echo = TRUE, engine.path = '/usr/bin/python3'}
+resultsDict = json.loads(results[0])
+print(resultsDict)
+columnNames = list(resultsDict.keys())
+print(columnNames)
+```
+
+To visualize the results using the package PrettyTable: 
+
+```{python prism-python5, eval = TRUE, echo = TRUE, engine.path = '/usr/bin/python3'}
+from prettytable import PrettyTable
+table = PrettyTable()
+table = PrettyTable()
+table.align["Year"] = "l" # Left align year
+table.padding_width = 1 # One space between column edges and contents (default)
+print(columnNames)
+for col in columnNames:
+    table.add_column(col, resultsDict[col])
+print(table)
+```
+
+## PRISM in Javascript
+
+To use the PRISM API in Javascript, you will need to use the XMLHttpRequest module. We will start by sending a GET request:
+
+```{js, eval=FALSE, echo=TRUE}
+request = new XMLHttpRequest();
+request.open('GET', 'http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json');
+request.send();
+```
+
+The **onreadystatechange** is an XMLHttpRequest event which updates when the ready state changes. The ready state can be either 1, 2, 3, or 4. 
+```{r javascript1, eval = TRUE, echo = FALSE}
+dev.off()
+readyState = c(0, 1, 2, 3, 4)
+values = c("Unsent", "Opened: open() has been called",
+           "Headers Received: send() has been called and headers are available",
+           "Loading: downloading; responseText holds partial data",
+           "Done: the operation is complete")
+metadata = data.frame("readyState"=readyState, Description = values)
+names(metadata) = c("Ready State", "Description")
+```
+
+```{r javascript2, eval = TRUE, echo = FALSE}
+knitr::kable(
+  metadata, booktabs = TRUE
+)
+```
+
+```{js, eval=FALSE, echo=TRUE}
+request.onreadystatechange = function() {
+            if(request.readyState === 4) { // 
+                if(request.status === 200) {
+                    console.log(request.responseText);
+                } else {
+                		console.log(request.status);
+                }
+            }
+        }
+```
+
+To get a prediction, we can send a POST request. We will first create an example patient using json:
+
+```{js, eval=FALSE}
+let patient = JSON.stringify({
+  api_key: 123456,
+  func: ["prism_model_run"],
+  model_input: [{
+    ID: 10001,
+    male: 1,
+    age: 70,
+    smoker: 1,
+    FEV1: 2.5,
+    height: 1.68,
+    weight: 65
+  }]
+});
+```
+
+We need to set the request header to json, and then send our patient json to the PRISM server using the **request.send()** function. 
+
+```{js, eval=FALSE}
+request.open('POST', 'http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json');
+request.setRequestHeader('Content-Type', 'application/json');
+request.send(patient); // Send request
+let results = request.response;
+```
+
+# Using the Web Application {#webapp}
+
+We have created a web application which can be found here: [FEV1 Prediction App](http://resp.core.ubc.ca/ipress/FEV1Pred)
+
+# Appendix 1: Installing R {#appendix1}
+
+This is a guide to installing R, geared mainly at beginner audiences. All the information below can be found at https://www.r-project.org/; I've just simplified it a bit.
+
+## Step 1: Mirrors
+
+When you go the the R home page, you will see a link to [download R](https://cran.r-project.org/mirrors.html), which will take you to a list of mirrors. They are organized by country, so click on one that is close to your location. Since our group is based out of Vancouver, I will select one of the mirrors in Canada: [SFU Mirror](https://mirror.its.sfu.ca/mirror/CRAN/).
+
+Once you have clicked on the closest mirror, you will be asked to choose what type of computer you have.
+
+## Mac OS X
+
+If you are using a Mac (Apple) computer, click on the link for Mac OS X. You will be redirected to a page that says "R for Mac OS X." To install R, you want to click on one of the files ending in ".pkg". If your operating system is fairly up-to-date, scroll to "Latest Release" and click on the file that looks like "R-3.X.Y.pkg," with X and Y being numbers for the latest release. R should begin downloading, and your Mac package manager will pop up with the rest of the instructions.
+
+If your operating system is older, you might want to scroll down to "Legacy Releases," and download one of those ".pkg" files instead. It should tell you on the page what version your computer should use.
+
+## Windows
+
+If you are using Windows, click on the link for Windows. You will be redirected to a page that says "R for Windows." To install R, click on the link "base," and on the next page, "Download R 3.X.Y for Windows," where X and Y are the version numbers for the latest release. R should begin downloading.
+
+
+
