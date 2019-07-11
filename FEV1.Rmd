@@ -1,5 +1,8 @@
 ---
 title: "FEV1 Prediction Model for COPD"
+author:
+  name: Ainsleigh Hill
+  affiliation: University of British Columbia
 site: "bookdown::bookdown_site"
 runtime: "shiny"
 output:
