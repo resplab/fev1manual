@@ -347,7 +347,7 @@ PRISM (Programmable Interface for Simulation/Statistical Models) is a package wh
 
 For more information, the PRISM package can be found on GitHub at [PRISM on  GitHub](https://github.com/resplab/prism).
 
-## PRISM in R
+## R API
 
 To install PRISM in R, you will need to install it from GitHub. In an R Console:
 ```{r prism-r, eval = FALSE, echo = TRUE}
@@ -367,7 +367,7 @@ model_run(patient1)
 res <- as.data.frame(model_run(patient1))
 ```
 
-## PRISM in Shell
+## Shell/Bash API
 
 ### Linux
 
@@ -428,17 +428,26 @@ curl -X POST -H "Content-Type: application/json" -d '{"api_key":[123456],"func":
 ```
 
 
-## PRISM in Python
+## Python API
+
+For this, we are assuming the use of Python 3.
+
+```{r eval = TRUE, echo = FALSE}
+pythonEngine = as.character(Sys.which("python3"))
+if(pythonEngine == "") {
+  print("Error: Please install Python 3")
+}
+```
 
 To get started, you will need to import the **json** and **requests** libraries. To install, open a terminal:
 
-```{bash prism-python, eval = FALSE, echo = TRUE, engine.path = '/usr/bin/python3'}
+```{bash prism-python, eval = FALSE, echo = TRUE, engine.path = pythonEngine}
 pip3 install requests
 ```
 
 We will start with the GET request. If everything is working, this should return 200 as a response.
 
-```{python prism-python-get, eval = TRUE, echo = TRUE, engine.path = '/usr/bin/python3'}
+```{python prism-python-get, eval = TRUE, echo = TRUE, engine.path = pythonEngine}
 import json
 import requests
 response = requests.get("http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json")
@@ -447,7 +456,7 @@ print(response)
 
 For the POST request, we will send some patient data to the API, and should get a prediction back from the API.
 
-```{python prism-python2, eval = FALSE, echo = TRUE, engine.path = '/usr/bin/python3'}
+```{python prism-python2, eval = FALSE, echo = TRUE, engine.path = pythonEngine}
 api_key = 'YOUR_API_KEY'
 patientInput = [{
 "ID":"10001",
@@ -467,7 +476,7 @@ results = json.loads(response.text)
 print(results)
 ```
 
-```{python prism-python3, eval = TRUE, echo = FALSE, engine.path = '/usr/bin/python3'}
+```{python prism-python3, eval = TRUE, echo = FALSE, engine.path = pythonEngine}
 response = requests.post("http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json", json = {"api_key":[123456],"func":["prism_model_run"],"model_input":[{"ID":"10001","male":1,"age":70,"smoker":1,"FEV1":2.5,"height":1.68,"weight":65}]})
 print(response)
 results = json.loads(response.text)
@@ -476,7 +485,7 @@ print(results)
 
 We will put the results in a dictionary:
 
-```{python prism-python4, eval = TRUE, echo = TRUE, engine.path = '/usr/bin/python3'}
+```{python prism-python4, eval = TRUE, echo = TRUE, engine.path = pythonEngine}
 resultsDict = json.loads(results[0])
 print(resultsDict)
 columnNames = list(resultsDict.keys())
@@ -485,7 +494,7 @@ print(columnNames)
 
 To visualize the results using the package PrettyTable: 
 
-```{python prism-python5, eval = TRUE, echo = TRUE, engine.path = '/usr/bin/python3'}
+```{python prism-python5, eval = TRUE, echo = TRUE, engine.path = pythonEngine}
 from prettytable import PrettyTable
 table = PrettyTable()
 table = PrettyTable()
@@ -497,7 +506,7 @@ for col in columnNames:
 print(table)
 ```
 
-## PRISM in Javascript
+## Javascript API
 
 To use the PRISM API in Javascript, you will need to use the XMLHttpRequest module. We will start by sending a GET request:
 

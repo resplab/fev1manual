@@ -162,14 +162,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html"><i class="fa fa-check"></i><b>4</b> Using the Package as an API (PRISM)</a><ul>
-<li class="chapter" data-level="4.1" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-prism-in-r"><i class="fa fa-check"></i><b>4.1</b> PRISM in R</a></li>
-<li class="chapter" data-level="4.2" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-prism-in-shell"><i class="fa fa-check"></i><b>4.2</b> PRISM in Shell</a><ul>
+<li class="chapter" data-level="4.1" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-r-api"><i class="fa fa-check"></i><b>4.1</b> R API</a></li>
+<li class="chapter" data-level="4.2" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-shellbash-api"><i class="fa fa-check"></i><b>4.2</b> Shell/Bash API</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-linux"><i class="fa fa-check"></i><b>4.2.1</b> Linux</a></li>
 <li class="chapter" data-level="4.2.2" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-mac-os"><i class="fa fa-check"></i><b>4.2.2</b> Mac OS</a></li>
 <li class="chapter" data-level="4.2.3" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-windows-powershell"><i class="fa fa-check"></i><b>4.2.3</b> Windows PowerShell</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-prism-in-python"><i class="fa fa-check"></i><b>4.3</b> PRISM in Python</a></li>
-<li class="chapter" data-level="4.4" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-prism-in-javascript"><i class="fa fa-check"></i><b>4.4</b> PRISM in Javascript</a></li>
+<li class="chapter" data-level="4.3" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-python-api"><i class="fa fa-check"></i><b>4.3</b> Python API</a></li>
+<li class="chapter" data-level="4.4" data-path="section-using-the-package-as-an-api-prism.html"><a href="section-using-the-package-as-an-api-prism.html#section-javascript-api"><i class="fa fa-check"></i><b>4.4</b> Javascript API</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="section-webapp.html"><a href="section-webapp.html"><i class="fa fa-check"></i><b>5</b> Using the Web Application</a></li>
 <li class="chapter" data-level="6" data-path="section-appendix1.html"><a href="section-appendix1.html"><i class="fa fa-check"></i><b>6</b> Appendix 1: Installing R</a><ul>
@@ -198,8 +198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">4</span> Using the Package as an API (PRISM)</h1>
 <p>PRISM (Programmable Interface for Simulation/Statistical Models) is a package which provides a user-friendly API interface in R for clinical prediction and decision analytics models hosted on UBC PRISM cloud.</p>
 <p>For more information, the PRISM package can be found on GitHub at <a href="https://github.com/resplab/prism">PRISM on GitHub</a>.</p>
-<div id="section-prism-in-r" class="section level2">
-<h2><span class="header-section-number">4.1</span> PRISM in R</h2>
+<div id="section-r-api" class="section level2">
+<h2><span class="header-section-number">4.1</span> R API</h2>
 <p>To install PRISM in R, you will need to install it from GitHub. In an R Console:</p>
 <pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;resplab/prism&quot;</span>)</code></pre>
 <p>To use PRISM in R:</p>
@@ -271,8 +271,8 @@ res &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span cl
 <span class="co">#&gt; Current model is fev1Prism</span>
 <span class="co">#&gt; call is  http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json</span></code></pre>
 </div>
-<div id="section-prism-in-shell" class="section level2">
-<h2><span class="header-section-number">4.2</span> PRISM in Shell</h2>
+<div id="section-shellbash-api" class="section level2">
+<h2><span class="header-section-number">4.2</span> Shell/Bash API</h2>
 <div id="section-linux" class="section level3">
 <h3><span class="header-section-number">4.2.1</span> Linux</h3>
 <p>You will need curl installed to use the API. To check if you have curl:</p>
@@ -285,8 +285,8 @@ res &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span cl
 #&gt;                                  Dload  Upload   Total   Spent    Left  Speed
 #&gt; 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100   144    0     0  100   144      0    702 --:--:-- --:--:-- --:--:--   699
-100  1630    0  1486  100   144   2354    228 --:--:-- --:--:-- --:--:--  2579
+100  1630    0  1486  100   144   2293    222 --:--:-- --:--:-- --:--:--  2515
+100  1630    0  1486  100   144   2293    222 --:--:-- --:--:-- --:--:--  2511
 #&gt; [&quot;{\&quot;Year\&quot;:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],\&quot;FEV1\&quot;:[2.5,2.3865,2.3192,2.251,2.1819,2.1119,2.0411,1.9694,1.8968,1.8233,1.7489,1.6737,1.5976,1.5206,1.4427,1.3639,2.5,2.5167,2.4749,2.4322,2.3886,2.3442,2.2988,2.2526,2.2056,2.1576,2.1088,2.059,2.0084,1.957,1.9046,1.8513],\&quot;variance\&quot;:[0,0.0156,0.0181,0.0222,0.0278,0.0349,0.0435,0.0537,0.0654,0.0786,0.0933,0.1096,0.1274,0.1467,0.1676,0.1899,0,0.0156,0.0181,0.0222,0.0278,0.0349,0.0435,0.0537,0.0654,0.0786,0.0933,0.1096,0.1274,0.1467,0.1676,0.1899],\&quot;FEV1_lower\&quot;:[2.5,2.1418,2.0553,1.959,1.8552,1.7458,1.6321,1.5152,1.3956,1.2738,1.1501,1.0248,0.898,0.7698,0.6404,0.5097,2.5,2.272,2.211,2.1402,2.0619,1.978,1.8899,1.7985,1.7044,1.6081,1.5099,1.4101,1.3088,1.2062,1.1023,0.9972],\&quot;FEV1_upper\&quot;:[2.5,2.6312,2.583,2.5429,2.5086,2.4781,2.45,2.4236,2.398,2.3728,2.3477,2.3226,2.2971,2.2713,2.245,2.2181,2.5,2.7613,2.7387,2.7241,2.7153,2.7103,2.7078,2.7068,2.7068,2.7071,2.7076,2.7079,2.708,2.7077,2.7069,2.7055],\&quot;Scenario\&quot;:[\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;]}&quot;]</code></pre>
 </div>
 <div id="section-mac-os" class="section level3">
@@ -301,8 +301,7 @@ res &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span cl
 #&gt;                                  Dload  Upload   Total   Spent    Left  Speed
 #&gt; 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  1631    0  1486  100   145   2300    224 --:--:-- --:--:-- --:--:--  2520
-100  1631    0  1486  100   145   2296    224 --:--:-- --:--:-- --:--:--  2516
+100  1631    0  1486  100   145   2049    200 --:--:-- --:--:-- --:--:--  2249
 #&gt; [&quot;{\&quot;Year\&quot;:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],\&quot;FEV1\&quot;:[2.5,2.3865,2.3192,2.251,2.1819,2.1119,2.0411,1.9694,1.8968,1.8233,1.7489,1.6737,1.5976,1.5206,1.4427,1.3639,2.5,2.5167,2.4749,2.4322,2.3886,2.3442,2.2988,2.2526,2.2056,2.1576,2.1088,2.059,2.0084,1.957,1.9046,1.8513],\&quot;variance\&quot;:[0,0.0156,0.0181,0.0222,0.0278,0.0349,0.0435,0.0537,0.0654,0.0786,0.0933,0.1096,0.1274,0.1467,0.1676,0.1899,0,0.0156,0.0181,0.0222,0.0278,0.0349,0.0435,0.0537,0.0654,0.0786,0.0933,0.1096,0.1274,0.1467,0.1676,0.1899],\&quot;FEV1_lower\&quot;:[2.5,2.1418,2.0553,1.959,1.8552,1.7458,1.6321,1.5152,1.3956,1.2738,1.1501,1.0248,0.898,0.7698,0.6404,0.5097,2.5,2.272,2.211,2.1402,2.0619,1.978,1.8899,1.7985,1.7044,1.6081,1.5099,1.4101,1.3088,1.2062,1.1023,0.9972],\&quot;FEV1_upper\&quot;:[2.5,2.6312,2.583,2.5429,2.5086,2.4781,2.45,2.4236,2.398,2.3728,2.3477,2.3226,2.2971,2.2713,2.245,2.2181,2.5,2.7613,2.7387,2.7241,2.7153,2.7103,2.7078,2.7068,2.7068,2.7071,2.7076,2.7079,2.708,2.7077,2.7069,2.7055],\&quot;Scenario\&quot;:[\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;]}&quot;]</code></pre>
 </div>
 <div id="section-windows-powershell" class="section level3">
@@ -313,12 +312,14 @@ res &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span cl
 #&gt;                                  Dload  Upload   Total   Spent    Left  Speed
 #&gt; 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  1631    0  1486  100   145   2332    227 --:--:-- --:--:-- --:--:--  2560
+100   145    0     0  100   145      0    710 --:--:-- --:--:-- --:--:--   707
+100  1631    0  1486  100   145   2381    232 --:--:-- --:--:-- --:--:--  2609
 #&gt; [&quot;{\&quot;Year\&quot;:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],\&quot;FEV1\&quot;:[2.5,2.3865,2.3192,2.251,2.1819,2.1119,2.0411,1.9694,1.8968,1.8233,1.7489,1.6737,1.5976,1.5206,1.4427,1.3639,2.5,2.5167,2.4749,2.4322,2.3886,2.3442,2.2988,2.2526,2.2056,2.1576,2.1088,2.059,2.0084,1.957,1.9046,1.8513],\&quot;variance\&quot;:[0,0.0156,0.0181,0.0222,0.0278,0.0349,0.0435,0.0537,0.0654,0.0786,0.0933,0.1096,0.1274,0.1467,0.1676,0.1899,0,0.0156,0.0181,0.0222,0.0278,0.0349,0.0435,0.0537,0.0654,0.0786,0.0933,0.1096,0.1274,0.1467,0.1676,0.1899],\&quot;FEV1_lower\&quot;:[2.5,2.1418,2.0553,1.959,1.8552,1.7458,1.6321,1.5152,1.3956,1.2738,1.1501,1.0248,0.898,0.7698,0.6404,0.5097,2.5,2.272,2.211,2.1402,2.0619,1.978,1.8899,1.7985,1.7044,1.6081,1.5099,1.4101,1.3088,1.2062,1.1023,0.9972],\&quot;FEV1_upper\&quot;:[2.5,2.6312,2.583,2.5429,2.5086,2.4781,2.45,2.4236,2.398,2.3728,2.3477,2.3226,2.2971,2.2713,2.245,2.2181,2.5,2.7613,2.7387,2.7241,2.7153,2.7103,2.7078,2.7068,2.7068,2.7071,2.7076,2.7079,2.708,2.7077,2.7069,2.7055],\&quot;Scenario\&quot;:[\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;Smoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;,\&quot;QuitsSmoking\&quot;]}&quot;]</code></pre>
 </div>
 </div>
-<div id="section-prism-in-python" class="section level2">
-<h2><span class="header-section-number">4.3</span> PRISM in Python</h2>
+<div id="section-python-api" class="section level2">
+<h2><span class="header-section-number">4.3</span> Python API</h2>
+<p>For this, we are assuming the use of Python 3.</p>
 <p>To get started, you will need to import the <strong>json</strong> and <strong>requests</strong> libraries. To install, open a terminal:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip3</span> install requests</code></pre>
 <p>We will start with the GET request. If everything is working, this should return 200 as a response.</p>
@@ -402,8 +403,8 @@ table.padding_width <span class="op">=</span> <span class="dv">1</span> <span cl
 <span class="co">#&gt; |  15  | 1.8513 |  0.1899  |   0.9972   |   2.7055   | QuitsSmoking |</span>
 <span class="co">#&gt; +------+--------+----------+------------+------------+--------------+</span></code></pre>
 </div>
-<div id="section-prism-in-javascript" class="section level2">
-<h2><span class="header-section-number">4.4</span> PRISM in Javascript</h2>
+<div id="section-javascript-api" class="section level2">
+<h2><span class="header-section-number">4.4</span> Javascript API</h2>
 <p>To use the PRISM API in Javascript, you will need to use the XMLHttpRequest module. We will start by sending a GET request:</p>
 <pre class="sourceCode js"><code class="sourceCode javascript">request <span class="op">=</span> <span class="kw">new</span> <span class="at">XMLHttpRequest</span>()<span class="op">;</span>
 <span class="va">request</span>.<span class="at">open</span>(<span class="st">&#39;GET&#39;</span><span class="op">,</span> <span class="st">&#39;http://prism.resp.core.ubc.ca/ocpu/library/fev1Prism/R/gateway/json&#39;</span>)<span class="op">;</span>
@@ -511,7 +512,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf"],
+"download": null,
 "toc": {
 "collapse": "subsection",
 "scroll_highlight": true
