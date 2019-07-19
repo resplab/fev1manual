@@ -107,6 +107,7 @@ render_graph(graph, layout="tree")
 
 ### Group 1: Usual Care {-}
 
+helo
 Number of Participants: 1962
 
 Treatment: None. This group only received usual care, no interventions. 
@@ -555,7 +556,7 @@ To get a prediction, we can send a POST request. We will first create an example
 
 ```{js, eval=FALSE}
 let patient = JSON.stringify({
-  api_key: 123456,
+  api_key: YOUR_API_KEY,
   func: ["prism_model_run"],
   model_input: [{
     ID: 10001,
